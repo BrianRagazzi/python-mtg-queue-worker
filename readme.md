@@ -103,7 +103,7 @@ Set apps.tanzu.vmware.com/workload-type to worker
 --type=worker
 
 tanzu apps workload create python-mtg-queue-worker \
-  --git-repo https://github.com/BrianRagazzi/python-mtg-queue-fetcher \
+  --git-repo https://github.com/BrianRagazzi/python-mtg-queue-worker \
   --git-branch main \
   --type worker \
   --label app.kubernetes.io/part-of=python-mtg-queue-worker \
