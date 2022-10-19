@@ -35,7 +35,7 @@ def main():
     print("  Rabbit queue %r" %qname)
     print("  s3 server %r" % s3server)
     print("  sleeptime %r" % str(sleeptime))
-    print("  maxruns %r" % str(maxruns))
+    #print("  maxruns %r" % str(maxruns))
 
     # connect to RabbitMQ
     rabbit_credentials = pika.PlainCredentials(rabbitmq_username,rabbitmq_password)
