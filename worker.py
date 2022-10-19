@@ -30,7 +30,7 @@ def main():
     s3accesskey = os.getenv("S3ACCESSKEY")
     s3secretkey = os.getenv("S3SECRETKEY")
     sleeptime = int(os.getenv("SLEEPTIME")) or 2
-    maxruns = int(os.getenv("MAXRUNS")) or 0
+    #maxruns = int(os.getenv("MAXRUNS")) or 0
     print("  Rabbit host %r" % host)
     print("  Rabbit queue %r" %qname)
     print("  s3 server %r" % s3server)
@@ -52,11 +52,11 @@ def main():
 
     def callback(ch, method, properties, body):
         global runCt
-        if int(maxruns)>0:
-            runCt=runCt+1
-            if int(runCt) > int(maxruns):
-                print(" [*] Max interations:" + str(maxruns) + " reached, quitting")
-                abort()      
+        # if int(maxruns)>0:
+        #     runCt=runCt+1
+        #     if int(runCt) > int(maxruns):
+        #         print(" [*] Max interations:" + str(maxruns) + " reached, quitting")
+        #         abort()      
 
         try:
             cardjson=body
