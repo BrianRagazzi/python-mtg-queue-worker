@@ -6,10 +6,10 @@
 import os
 import sys
 import time
-import base64
 import json
 import pika
-import wget
+import requests
+from requests.exceptions import HTTPError
 # import urllib3.request
 from genericpath import isfile
 from minio import Minio
@@ -23,6 +23,8 @@ def main():
     print(" [*] Starting main")
     host = os.getenv("RABBITMQ_HOST")
     qname = os.getenv("RABBITMQ_QUEUE")
+    rabbitmq_username = os.getenv("RABBITMQ_USERNAME") or "myuser"
+    rabbitmq_password = os.getenv("RABBITMQ_PASSWORD") or "mypass"
     s3server = os.getenv("S3SERVER")
     s3bucket = os.getenv("S3BUCKET")
     s3accesskey = os.getenv("S3ACCESSKEY")
@@ -35,12 +37,16 @@ def main():
     print("  sleeptime %r" % str(sleeptime))
     print("  maxruns %r" % str(maxruns))
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=host))
+    # connect to RabbitMQ
+    rabbit_credentials = pika.PlainCredentials(rabbitmq_username,rabbitmq_password)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=host,credentials=rabbit_credentials))
     channel = connection.channel()
+    channel.queue_declare(queue=qname, durable=True)
+    
+    # connect to S3
     client=openBucket(s3server,s3bucket,s3accesskey, s3secretkey)
     global runCt
     runCt = 0
-    channel.queue_declare(queue=qname, durable=True)
     print(' [*] Started - Waiting for messages.')
 
 
@@ -53,11 +59,19 @@ def main():
                 abort()      
 
         try:
-            cardjson=base64.b64decode(body.decode())
+            cardjson=body
             print(" [*] Message received, parsing")
+            #cardjson = cardjson.replace("\'", "\"") #replace single-quote with proper doule-quotes
+            #print(cardjson)
+            #y = json.loads(body)
+            
+            #print("name: " + str(y['name']))
+
+
+
             imageurl=getImageURL(cardjson)
             if imageurl != "":
-
+                print(" [*] Found imageURL: " + str(imageurl))
                 imagefile=getSetCardNum(cardjson)+".jpg"
                 print(" [*] Downloading " + imageurl + " to " + imagefile)
                 downloadFile(imageurl,imagefile)
@@ -68,6 +82,8 @@ def main():
                         ch.basic_ack(delivery_tag=method.delivery_tag)
                         deleteFile(imagefile)
                         print(" [x] Done")
+                        print(" [*] Sleeping " + str(sleeptime) + " seconds")
+                        time.sleep(int(sleeptime))
                     except S3Error as exc:
                         print(" [!] ERROR: ", exc)
                 else:
@@ -75,13 +91,13 @@ def main():
             else:
                 print(" [!] ACK anyway to clear item from queue")
                 ch.basic_ack(delivery_tag=method.delivery_tag)
+        except HTTPError as http_err:
+            print(" [!] HTTP error occurred: " + str(http_err))
         except Exception as e:
             print(" [!] ERROR: " + str(e))
                 
 
-        print(imageurl)
-        print(" [*] Sleeping " + str(sleeptime) + " seconds")
-        time.sleep(int(sleeptime))
+        
         
 
     channel.basic_qos(prefetch_count=1)
@@ -126,7 +142,6 @@ def getImageURL(cardjson):
     except Exception as e:
         print(" [!] ERROR: Unable to parse.")
         largeimageurl=""
-        print(cardjson)
     return largeimageurl
 
 def getMultiverseID(cardjson):
@@ -147,7 +162,10 @@ def getLayout(cardjson):
 
 def downloadFile(url, filename):
 
-    return wget.download(url,filename)
+    #return wget.download(url,filename)
+    response = requests.get(url)
+    with open(filename,"wb") as f:  #wb = write binary
+        f.write(response.content)
     # urllib.request.urlretrieve(url, filename)
 
 def fileExists(filename):
