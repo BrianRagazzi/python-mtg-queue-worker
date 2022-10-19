@@ -120,3 +120,6 @@ tanzu apps workload create python-mtg-queue-worker \
   --env S3SECRETKEY="MCSECRET" \
   --env SLEEPTIME="5" \
   --yes
+
+
+tanzu apps workload delete python-mtg-queue-worker
