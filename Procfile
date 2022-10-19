@@ -1,1 +1,1 @@
-worker: python worker.py
+cmd: python /workspace/worker.py
