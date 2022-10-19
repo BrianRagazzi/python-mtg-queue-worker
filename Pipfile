@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 pika = "*"
 requests = "*"
+minio = "*"
 
 [dev-packages]
 pika = "*"
