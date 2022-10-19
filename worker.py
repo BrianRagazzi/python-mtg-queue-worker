@@ -116,7 +116,7 @@ def openBucket(s3server,s3bucket,s3accesskey,s3secretkey):
     secret_key=s3secretkey)
 
     if client.bucket_exists(s3bucket):
-        objects = client.list_objects(s3bucket)
+        objects = client.list_objects(s3bucket) #iterator of object
         ct=0
         for obj in objects:
             ct=ct+1
