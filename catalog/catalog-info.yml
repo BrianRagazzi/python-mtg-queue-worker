@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: python-mtg-queue-worker
+  description: Python MTG Queue Worker
+  tags:
+    - python
+    - web
+    - tanzu
+  annotations:
+    'backstage.io/kubernetes-label-selector': 'app.kubernetes.io/part-of=python-mtg-queue-worker'
+spec:
+  type: service
+  lifecycle: experimental
+  owner: default-team

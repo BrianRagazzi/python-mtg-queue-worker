@@ -52,7 +52,7 @@ amqp-get -u=$BROKER_URL -q=job1 | base64 -d | jq -r '.image_uris.large'
 
 
 
-ver="202210181648"
+ver="202210211000"
 docker build -t ragazzilab/mtgqueueworker:$ver -f ./Dockerfile .
 docker tag ragazzilab/mtgqueueworker:$ver harbor.lab.brianragazzi.com/library/mtgqueueworker:$ver
 docker tag ragazzilab/mtgqueueworker:$ver harbor.lab.brianragazzi.com/library/mtgqueueworker:latest
@@ -83,15 +83,15 @@ docker run --name worker \
 
 
 ## Run Local:
-export RABBITMQ_HOST="192.168.103.27" 
-export RABBITMQ_QUEUE="cards" 
-export RABBITMQ_USERNAME="myuser" 
-export RABBITMQ_PASSWORD="mypass" 
-export S3SERVER="minio.lab.brianragazzi.com" 
-export S3BUCKET="cardimages" 
-export S3ACCESSKEY="MCACCESS" 
-export S3SECRETKEY="MCSECRET" 
-export SLEEPTIME="5" 
+export RABBITMQ_HOST="192.168.103.10"
+export RABBITMQ_QUEUE="cards"
+export RABBITMQ_USERNAME="myuser"
+export RABBITMQ_PASSWORD="mypass"
+export S3SERVER="minio.lab.brianragazzi.com"
+export S3BUCKET="cardimages"
+export S3ACCESSKEY="MCACCESS"
+export S3SECRETKEY="MCSECRET"
+export SLEEPTIME="5"
 export MAXRUNS="2"
 
 python3 -u ./worker.py
@@ -110,7 +110,7 @@ tanzu apps workload create python-mtg-queue-worker \
   --label apps.tanzu.vmware.com/has-tests=false \
   --namespace default \
   --tail \
-  --env "RABBITMQ_HOST=192.168.103.27" \
+  --env "RABBITMQ_HOST=192.168.103.10" \
   --env "RABBITMQ_QUEUE=cards" \
   --env "RABBITMQ_USERNAME=myuser" \
   --env "RABBITMQ_PASSWORD=mypass" \

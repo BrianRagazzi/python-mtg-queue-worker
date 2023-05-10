@@ -36,6 +36,8 @@ def main():
     print("  s3 server %r" % s3server)
     print("  sleeptime %r" % str(sleeptime))
     #print("  maxruns %r" % str(maxruns))
+    podname=os.uname()[1]
+    print(" Pod Name %r" % podname)
 
     # connect to RabbitMQ
     rabbit_credentials = pika.PlainCredentials(rabbitmq_username,rabbitmq_password)

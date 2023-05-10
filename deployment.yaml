@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mtgworkers
+  labels:
+    app: scryfallwork
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: scryfallwork
+  template:
+    metadata:
+      labels:
+        app: scryfallwork
+    spec:
+      containers:
+      - name: scryfallwork
+        image:  harbor.lab.brianragazzi.com/library/mtgqueueworker:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "512Mi"
+        env:
+          - name: RABBITMQ_HOST
+            value: "192.168.103.27"
+          - name: RABBITMQ_QUEUE
+            value: "cards"
+          - name: RABBITMQ_USERNAME
+            value: "myuser"
+          - name: RABBITMQ_PASSWORD
+            value: "mypass"
+          - name: S3SERVER
+            value: "minio.lab.brianragazzi.com"
+          - name: S3BUCKET
+            value: "cardimages"
+          - name: S3ACCESSKEY
+            value: "MCACCESS"
+          - name: S3SECRETKEY
+            value: "MCSECRET"
+          - name: SLEEPTIME
+            value: "5"
+          - name: MAXRUNS #Ignored now
+            value: "0"
+#      imagePullSecrets:
+#      - name: harbor
