@@ -25,7 +25,7 @@ spec:
             memory: "512Mi"
         env:
           - name: RABBITMQ_HOST
-            value: "192.168.103.27"
+            value: "192.168.103.10"
           - name: RABBITMQ_QUEUE
             value: "cards"
           - name: RABBITMQ_USERNAME
